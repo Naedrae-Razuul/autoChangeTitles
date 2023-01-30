@@ -48,8 +48,8 @@ def login():
     browser.get('https://studio.resi.io/settings/destination-groups?refresh')
     time.sleep(0.5)
 
-    browser.find_element('name', 'username').send_keys('username')
-    browser.find_element('name', 'password').send_keys('password')
+    browser.find_element('name', 'username').send_keys('robbie.hinckley@kairos.church')
+    browser.find_element('name', 'password').send_keys('Kairos101517!')
     browser.find_element('id', 'button---1').click()
     print("***login period completed!***")
 login()
@@ -70,12 +70,12 @@ def navigationPeriod():
     print("***Navigational period completed!***")
 navigationPeriod()
 
-list = ['placeholder', 'name', 'yt.title', 'yt.description', 'fb.title', 'fb.description'] # <------ allows for for loops instead of writing every bit out.
+list = ['name', 'yt.title', 'yt.description', 'fb.title', 'fb.description'] # <------ allows for for loops instead of writing every bit out.
 
 #-----------------------------------------------------------------------------------------------------------------------
 def editingText():
     print("\n\n\n***Editing text period initialized***")
-    for i in range(1, 6):
+    for i in range(0, 5):
         if 'description' in list[i]:
             try:
                 browser.find_element(By.ID, list[i]).send_keys(Keys.CONTROL + "a")
@@ -94,7 +94,6 @@ def editingText():
             continue
         except:
             print(error)
-            time.sleep(5)
             exit()
     print("***Editing text period completed!***")
 editingText()
@@ -140,7 +139,6 @@ def checkText():
     # clicks save. (don't enable unless you want it to save automatically)
     if 'yes' in saveauto:
         browser.find_element(By.CLASS_NAME, 'css-sq47s1-rui-button-base__container-rui-button__container').click()
-    time.sleep(100)
     exit()
     print("***Check text period completed!***")
 
