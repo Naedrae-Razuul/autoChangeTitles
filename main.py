@@ -8,64 +8,80 @@
 # edited means: adding a check function for every input receiver so I don't have to check it every time.
 # mind you, I didn't go at this every day. Only on the occasional Sunday
 #
-
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+
 import time
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-# console input, assigning variables
+
+#-----------------------------------------------------------------------------------------------------------------------
 title = input("What is the title of this Sunday?")
-description = input("Notes Link?")
+description1 = input("Notes Link?")
 saveauto = input("Would you like to save automatically?")
+
+#-----------------------------------------------------------------------------------------------------------------------
 title = "Kairos Church /// " + title
-description = "Thanks for joining us online.  Be sure to share, invite or start a watch part. " \
+checkDescription = "Thanks for joining us online.  Be sure to share, invite or start a watch part. " \
               "You can also watch online at www.youtube.com/kairoschurch\nFill Out Your Connect" \
               " Card  +++ www.kairos.church/connect-card\nShare a Prayer or Praise +++  www.k" \
-              "airos.church/prayer-praise\nNotes +++ " + description + "\nMaking a decision to " \
+              "airos.church/prayer-praise\nNotes +++ " + description1 + "\nMaking a decision to " \
               "follow Jesus +++ www.kairos.church/follow-jesus\nDownload our App +++ https://" \
               "tithely.app.link/kairos-church\n"
-path = './chromedriver.exe'
-browser = webdriver.Chrome(path)
+
+description = ["Thanks for joining us online.  Be sure to share, invite or start a watch part. ",
+              "You can also watch online at www.youtube.com/kairoschurch\nFill Out Your Connect",
+              " Card  +++ www.kairos.church/connect-card\nShare a Prayer or Praise +++  www.k",
+              "airos.church/prayer-praise\nNotes +++ " + description1 + "\nMaking a decision to ",
+              "follow Jesus +++ www.kairos.church/follow-jesus\nDownload our App +++ https://",
+              "tithely.app.link/kairos-church\n"]
+
+s=Service('./chromedriver.exe')
+browser = webdriver.Chrome(service=s)
 error = "A known error occured. This happend because the device running this\nprogram operated too slowly.\n\nRerunning the program should fix this error."
 
-# ----------------------------------------------------------------------------------------------------------------------
-# launch chrome, go to resi, input user and pass, and click login.
-browser.get('https://studio.resi.io/settings/destination-groups?refresh')
-time.sleep(1)
-browser.find_element('name', 'username').send_keys('username')
-browser.find_element('name', 'password').send_keys('password')
-browser.find_element('id', 'button---1').click()
-time.sleep(2)
+#-----------------------------------------------------------------------------------------------------------------------
+def login():
+    print("\n\n\n***login period initialized***")
+    browser.get('https://studio.resi.io/settings/destination-groups?refresh')
+    time.sleep(0.5)
 
+    browser.find_element('name', 'username').send_keys('username')
+    browser.find_element('name', 'password').send_keys('password')
+    browser.find_element('id', 'button---1').click()
+    print("***login period completed!***")
+login()
 
-# ----------------------------------------------------------------------------------------------------------------------
-# beyond this point, cookies must be saved from previous 'browser.get' function.
-# Goes to the editing title/desc portion of the destination group
-try:
-    browser.get('https://studio.resi.io/settings/destination-groups/76c60c45-d334-42fd-8087-a6f479ba1880')
-    time.sleep(2)
+#-----------------------------------------------------------------------------------------------------------------------
+def navigationPeriod():
+    print("\n\n\n***Navigational period initialized***")
+    try:
+        browser.get('https://studio.resi.io/settings/destination-groups/76c60c45-d334-42fd-8087-a6f479ba1880')
+        time.sleep(2)
 
-    browser.find_element(By.CLASS_NAME, 'css-1ctyr6v-rui-button-base__container-rui-icon-button__container').click()
-    time.sleep(2)
-except:
-    print(error)
-    time.sleep(10)
-    exit()
+        browser.find_element(By.CLASS_NAME, 'css-1ctyr6v-rui-button-base__container-rui-icon-button__container').click()
+        time.sleep(2)
+    except:
+        print(error)
+        time.sleep(10)
+        exit()
+    print("***Navigational period completed!***")
+navigationPeriod()
 
 list = ['placeholder', 'name', 'yt.title', 'yt.description', 'fb.title', 'fb.description'] # <------ allows for for loops instead of writing every bit out.
-# ----------------------------------------------------------------------------------------------------------------------
-# created a function here for minimizing of code; leisure purposes
-# Does the last bit of what it's designed to do. You can figure that out xDD
-def main():
+
+#-----------------------------------------------------------------------------------------------------------------------
+def editingText():
+    print("\n\n\n***Editing text period initialized***")
     for i in range(1, 6):
         if 'description' in list[i]:
             try:
                 browser.find_element(By.ID, list[i]).send_keys(Keys.CONTROL + "a")
                 browser.find_element(By.ID, list[i]).send_keys(Keys.DELETE)
-                browser.find_element(By.ID, list[i]).send_keys(description)
+                for n in range(0, 6):
+                    browser.find_element(By.ID, list[i]).send_keys(description[n])
                 continue
             except:
                 print(error)
@@ -80,11 +96,13 @@ def main():
             print(error)
             time.sleep(5)
             exit()
+    print("***Editing text period completed!***")
+editingText()
 
-main()
 #-----------------------------------------------------------------------------------------------------------------------
-# obviously, this checks the automatically inputted text, then clicks save :)
-def check():
+
+def checkText():
+    print("\n\n\n***Check text period initialized***")
     variable = ['placeholder']
     for i in range(1, 6):
         variable.append(browser.find_element(By.ID, list[i]).get_attribute("value"))
@@ -98,12 +116,14 @@ def check():
                 print('name: error')
                 exit()
         if 'description' in list[i]:
-            if variable[i] == description:
+            if variable[i] == checkDescription:
                 print('description: passed')
                 continue
             else:
                 print("something weird happend.. exiting to prevent extraneous issues.")
                 print('description: error')
+                print("VARIABLE=== " + variable[i])
+                print("\n\n\n\nCHECKDESCRIPTION=== " + checkDescription)
                 exit()
         if 'title' in list[i]:
             print(list[i])
@@ -120,9 +140,8 @@ def check():
     # clicks save. (don't enable unless you want it to save automatically)
     if 'yes' in saveauto:
         browser.find_element(By.CLASS_NAME, 'css-sq47s1-rui-button-base__container-rui-button__container').click()
-    time.sleep(1)
+    time.sleep(100)
     exit()
-#-----------------------------------------------------------------------------------------------------------------------
+    print("***Check text period completed!***")
 
-
-check()
+checkText()
